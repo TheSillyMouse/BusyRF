@@ -5,8 +5,13 @@
 #define OPEN_FLAG               (uint8_t)0xF7
 #define CLOSE_FLAG              (uint8_t)0xF7
 
-void packet_create(struct packet * packet_ptr, uint8_t * buffer)
+uint32_t packet_create(struct packet * packet_ptr, uint8_t * buffer)
 {
+    if (packet_ptr->payload_length == 0)
+    {
+        return 0;
+    }
+    
     buffer[0] = OPEN_FLAG;
 
     buffer[1] = packet_ptr->destination_address & 0xFF;
@@ -29,40 +34,38 @@ void packet_create(struct packet * packet_ptr, uint8_t * buffer)
 
     buffer[10 + packet_ptr->payload_length] = CLOSE_FLAG;
 
-    return;
+    return 11 + packet_ptr->payload_length;
 }
 
-struct packet * packet_decode(uint8_t * data)
+uint32_t packet_decode(uint8_t * data, struct packet * incoming_packet)
 {
-    static struct packet packet;
-
-    // if (data[0] != OPEN_FLAG)
-    // {
-    //     return NULL;
-    // }
-
-    // if (data[10 + data[9] + 1] != CLOSE_FLAG)
-    // {
-    //     return NULL;
-    // }
-    
-    packet.destination_address = data[1];
-    packet.destination_address |= (data[2] << 8);
-
-    packet.sender_address = data[3];
-    packet.sender_address |= (data[4] << 8);
-
-    packet.uid = data[5];
-    packet.uid |= (data[6] << 8);
-    packet.uid |= (data[7] << 16);
-    packet.uid |= (data[8] << 24);
-
-    packet.payload_length = data[9];
-
-    for (uint8_t i = 0; i < packet.payload_length; i++)
+    if (data[0] != OPEN_FLAG)
     {
-        packet.payload[0] = data[10 + i];
+        return 0;
     }
 
-    return (struct packet *)&packet;
+    if (data[9 + data[9] + 1] != CLOSE_FLAG)
+    {
+        return 0;
+    }
+    
+    incoming_packet->destination_address = data[1];
+    incoming_packet->destination_address |= (data[2] << 8);
+
+    incoming_packet->sender_address = data[3];
+    incoming_packet->sender_address |= (data[4] << 8);
+
+    incoming_packet->uid = data[5];
+    incoming_packet->uid |= (data[6] << 8);
+    incoming_packet->uid |= (data[7] << 16);
+    incoming_packet->uid |= (data[8] << 24);
+
+    incoming_packet->payload_length = data[9];
+
+    for (uint8_t i = 0; i < incoming_packet->payload_length; i++)
+    {
+        incoming_packet->payload[i] = data[10 + i];
+    }
+
+    return 0;
 }

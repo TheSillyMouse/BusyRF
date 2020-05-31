@@ -14,8 +14,8 @@ struct packet
     uint8_t payload[PAYLOAD_SIZE];
 };
 
-void packet_create(struct packet * packet_ptr, uint8_t * buffer);
+uint32_t packet_create(struct packet * packet_ptr, uint8_t * buffer);
 
-struct packet * packet_decode(uint8_t * data);
+uint32_t packet_decode(uint8_t * data, struct packet * incoming_packet);
 
 #endif
