@@ -1,0 +1,6 @@
+[submodule "src/libraries/nRF52_Drivers"]
+	path = src/libraries/nRF52_Drivers
+	url = https://github.com/TheSillyMouse/nRF52_Drivers.git
+[submodule "src/libraries/Utils"]
+	path = src/libraries/Utils
+	url = https://github.com/TheSillyMouse/Utils.git

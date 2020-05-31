@@ -1,0 +1,4 @@
+h
+loadbin /home/george/Projects/Firmwares/BusyRF/_build/nrf52832_xxaa.bin, 0
+r
+q
